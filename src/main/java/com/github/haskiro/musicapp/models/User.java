@@ -5,11 +5,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
 
     @Id
@@ -38,16 +39,23 @@ public class User {
     @Column(name = "bio")
     private String bio;
 
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private OffsetDateTime createdAt;
 
-    public User(String email, String firstName, String lastName, String photo, String bio) {
+    @Column(name = "password")
+    private String password;
+
+    public User(String email, String firstName, String lastName, String photo, String bio, String password) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.photo = photo;
         this.bio = bio;
+        this.password = password;
     }
 
     public User() {
@@ -109,17 +117,33 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return getId() == user.getId() && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getFirstName(), user.getFirstName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getPhoto(), user.getPhoto()) && Objects.equals(getBio(), user.getBio()) && Objects.equals(getCreatedAt(), user.getCreatedAt());
+        return getId() == user.getId() && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getFirstName(), user.getFirstName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getPhoto(), user.getPhoto()) && Objects.equals(getBio(), user.getBio()) && Objects.equals(getBirthDate(), user.getBirthDate()) && Objects.equals(getCreatedAt(), user.getCreatedAt()) && Objects.equals(getPassword(), user.getPassword());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getEmail(), getFirstName(), getLastName(), getPhoto(), getBio(), getCreatedAt());
+        return Objects.hash(getId(), getEmail(), getFirstName(), getLastName(), getPhoto(), getBio(), getBirthDate(), getCreatedAt(), getPassword());
     }
 
     @Override
@@ -131,6 +155,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", photo='" + photo + '\'' +
                 ", bio='" + bio + '\'' +
+                ", birthDate=" + birthDate +
                 ", createdAt=" + createdAt +
                 '}';
     }
