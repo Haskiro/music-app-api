@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,7 +31,20 @@ public class Track {
     private String audioFile;
 
     @Column(name = "released_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private OffsetDateTime releasedAt;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private OffsetDateTime createdAt;
+
+    @ManyToMany
+    @JoinTable(
+            name = "artist_track",
+            joinColumns = @JoinColumn(name = "track_id"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    List<Artist> artistList;
 
     public Track(String title, String cover, String audioFile, OffsetDateTime releasedAt) {
         this.title = title;
@@ -80,6 +94,22 @@ public class Track {
 
     public void setReleasedAt(OffsetDateTime releasedAt) {
         this.releasedAt = releasedAt;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<Artist> getArtistList() {
+        return artistList;
+    }
+
+    public void setArtistList(List<Artist> artistList) {
+        this.artistList = artistList;
     }
 
     @Override

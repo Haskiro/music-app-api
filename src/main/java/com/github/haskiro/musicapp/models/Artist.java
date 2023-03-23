@@ -1,26 +1,27 @@
 package com.github.haskiro.musicapp.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "artist")
+public class Artist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @Column(name = "email")
-    @Email(message = "Email must match patter email@example.com")
-    @NotEmpty(message = "Email must not be empty")
-    private String email;
+    @Column(name = "nickname")
+    @Size(min = 2, max = 30, message = "Nickname length must be between 2 and 30 characters")
+    @NotEmpty(message = "Nickname must not be empty")
+    private String nickname;
 
     @Column(name = "first_name")
     @Size(min = 2, max = 30, message = "First name length must be between 2 and 30 characters")
@@ -32,6 +33,10 @@ public class User {
     @NotEmpty(message = "Last name must not be empty")
     private String lastName;
 
+    @Column(name = "birth_date")
+    @Temporal(TemporalType.DATE)
+    private LocalDate birthDate;
+
     @Column(name = "photo")
     private String photo;
 
@@ -42,15 +47,20 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private OffsetDateTime createdAt;
 
-    public User(String email, String firstName, String lastName, String photo, String bio) {
-        this.email = email;
+    @ManyToMany(mappedBy = "artistList")
+    List<Track> trackList;
+
+    public Artist(String nickname, String firstName, String lastName, LocalDate birthDate, String photo, String bio, OffsetDateTime createdAt) {
+        this.nickname = nickname;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.birthDate = birthDate;
         this.photo = photo;
         this.bio = bio;
+        this.createdAt = createdAt;
     }
 
-    public User() {
+    public Artist() {
     }
 
     public int getId() {
@@ -61,12 +71,12 @@ public class User {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getFirstName() {
@@ -83,6 +93,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getPhoto() {
@@ -109,26 +127,35 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public List<Track> getTrackList() {
+        return trackList;
+    }
+
+    public void setTrackList(List<Track> trackList) {
+        this.trackList = trackList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return getId() == user.getId() && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getFirstName(), user.getFirstName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getPhoto(), user.getPhoto()) && Objects.equals(getBio(), user.getBio()) && Objects.equals(getCreatedAt(), user.getCreatedAt());
+        Artist artist = (Artist) o;
+        return id == artist.id && Objects.equals(nickname, artist.nickname) && Objects.equals(firstName, artist.firstName) && Objects.equals(lastName, artist.lastName) && Objects.equals(birthDate, artist.birthDate) && Objects.equals(photo, artist.photo) && Objects.equals(bio, artist.bio) && Objects.equals(createdAt, artist.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getEmail(), getFirstName(), getLastName(), getPhoto(), getBio(), getCreatedAt());
+        return Objects.hash(id, nickname, firstName, lastName, birthDate, photo, bio, createdAt);
     }
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Artist{" +
                 "id=" + id +
-                ", email='" + email + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", birthDate=" + birthDate +
                 ", photo='" + photo + '\'' +
                 ", bio='" + bio + '\'' +
                 ", createdAt=" + createdAt +
