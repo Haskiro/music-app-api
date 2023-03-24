@@ -1,18 +1,30 @@
 package com.github.haskiro.musicapp.controllers;
 
 
+import com.github.haskiro.musicapp.dto.RegistrationDTO;
 import com.github.haskiro.musicapp.dto.UserDTO;
 import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.services.UserService;
+import com.github.haskiro.musicapp.util.ErrorResponse;
+import com.github.haskiro.musicapp.util.UserRegistrationError;
+import com.github.haskiro.musicapp.util.UserValidator;
+import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
 
 @Controller
 @RestController
@@ -20,11 +32,13 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final UserValidator userValidator;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper) {
+    public UserController(UserService userService, ModelMapper modelMapper, UserValidator userValidator) {
         this.userService = userService;
         this.modelMapper = modelMapper;
+        this.userValidator = userValidator;
     }
 
     @GetMapping
@@ -34,7 +48,39 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
+    @PostMapping("/registration")
+    public ResponseEntity<HttpStatus> register(@RequestBody @Valid RegistrationDTO registrationDTO,
+                                               BindingResult bindingResult) {
+        User user = convertToUser(registrationDTO);
+        userValidator.validate(user, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = returnErrorsAsString(bindingResult);
+
+            throw new UserRegistrationError(errorMessage);
+        }
+
+        userService.register(user);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+
+
+    }
+
     public UserDTO convertToUserDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
+    }
+    public User convertToUser(RegistrationDTO registrationDTO) {
+        return modelMapper.map(registrationDTO, User.class);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(UserRegistrationError e) {
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

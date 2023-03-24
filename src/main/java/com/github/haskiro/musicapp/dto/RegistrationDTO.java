@@ -1,18 +1,10 @@
 package com.github.haskiro.musicapp.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDate;
-
-public class UserDTO {
-    private int id;
-
+public class RegistrationDTO {
     @Email(message = "Email must match patter email@example.com")
     @NotEmpty(message = "Email must not be empty")
     private String email;
@@ -25,19 +17,9 @@ public class UserDTO {
     @NotEmpty(message = "Last name must not be empty")
     private String lastName;
 
-    private String photo;
-
-    private String bio;
-
-    private LocalDate birthDate;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    @NotEmpty(message = "Password must not be empty")
+    @Size(min = 8, message = "Password length must be at least 8 characters")
+    private String password;
 
     public String getEmail() {
         return email;
@@ -63,27 +45,11 @@ public class UserDTO {
         this.lastName = lastName;
     }
 
-    public String getPhoto() {
-        return photo;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
