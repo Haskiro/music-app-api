@@ -12,9 +12,5 @@ public class MusicAppApplication {
 		SpringApplication.run(MusicAppApplication.class, args);
 	}
 
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
 
 }

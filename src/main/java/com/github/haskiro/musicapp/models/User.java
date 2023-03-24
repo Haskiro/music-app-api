@@ -49,6 +49,10 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public User(String email, String firstName, String lastName, String photo, String bio, String password) {
         this.email = email;
         this.firstName = firstName;
@@ -131,6 +135,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override
