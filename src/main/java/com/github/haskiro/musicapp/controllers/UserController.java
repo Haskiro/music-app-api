@@ -1,32 +1,28 @@
 package com.github.haskiro.musicapp.controllers;
 
 
-import com.github.haskiro.musicapp.dto.RegistrationDTO;
-import com.github.haskiro.musicapp.dto.UserDTO;
+import com.github.haskiro.musicapp.dto.userDTO.RegistrationDTO;
+import com.github.haskiro.musicapp.dto.userDTO.UserDTO;
 import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.services.UserService;
 import com.github.haskiro.musicapp.util.ErrorResponse;
 import com.github.haskiro.musicapp.util.UserRegistrationError;
 import com.github.haskiro.musicapp.util.UserValidator;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
 
-@Controller
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

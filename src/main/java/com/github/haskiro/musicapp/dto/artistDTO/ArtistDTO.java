@@ -1,21 +1,19 @@
-package com.github.haskiro.musicapp.dto;
+package com.github.haskiro.musicapp.dto.artistDTO;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public class UserDTO {
+public class ArtistDTO {
     private int id;
 
-    @Email(message = "Email must match patter email@example.com")
-    @NotEmpty(message = "Email must not be empty")
-    private String email;
+    @Size(min = 2, max = 30, message = "Nickname length must be between 2 and 30 characters")
+    @NotEmpty(message = "Nickname must not be empty")
+    private String nickname;
 
     @Size(min = 2, max = 30, message = "First name length must be between 2 and 30 characters")
     @NotEmpty(message = "First name must not be empty")
@@ -25,11 +23,11 @@ public class UserDTO {
     @NotEmpty(message = "Last name must not be empty")
     private String lastName;
 
+    private LocalDate birthDate;
+
     private String photo;
 
     private String bio;
-
-    private LocalDate birthDate;
 
     public int getId() {
         return id;
@@ -39,12 +37,12 @@ public class UserDTO {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getFirstName() {
@@ -63,6 +61,14 @@ public class UserDTO {
         this.lastName = lastName;
     }
 
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
     public String getPhoto() {
         return photo;
     }
@@ -77,13 +83,5 @@ public class UserDTO {
 
     public void setBio(String bio) {
         this.bio = bio;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
     }
 }
