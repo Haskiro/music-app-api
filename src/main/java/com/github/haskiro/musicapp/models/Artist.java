@@ -2,6 +2,7 @@ package com.github.haskiro.musicapp.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ public class Artist {
 
     @Column(name = "birth_date")
     @Temporal(TemporalType.DATE)
+    @NotNull(message = "Birth Date must not be null")
     private LocalDate birthDate;
 
     @Column(name = "photo")

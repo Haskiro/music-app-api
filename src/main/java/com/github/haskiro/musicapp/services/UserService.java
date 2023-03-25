@@ -58,15 +58,15 @@ public class UserService {
 
     @Transactional
     public AuthenticationResponse login(LoginDTO request) {
-        authenticationManager.authenticate(
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+
+        authenticationManager.authenticate (
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
 
         String jwtToken = jwtService.generateToken(new UserDetailsImpl(user));
         return new AuthenticationResponse(jwtToken);

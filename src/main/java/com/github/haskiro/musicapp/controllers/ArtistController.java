@@ -4,17 +4,21 @@ import com.github.haskiro.musicapp.dto.artistDTO.ArtistDTO;
 import com.github.haskiro.musicapp.dto.artistDTO.ArtistWithTracksDTO;
 import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.services.ArtistService;
-import com.github.haskiro.musicapp.util.ArtistNotFoundException;
+import com.github.haskiro.musicapp.util.ArtistException;
 import com.github.haskiro.musicapp.util.ErrorResponse;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
 
 @RestController
 @RequestMapping("/api/artists")
@@ -42,8 +46,28 @@ public class ArtistController {
         return converToArtistWithTracksDTO(artist);
     }
 
+    @PostMapping
+    public ResponseEntity<HttpStatus> createArtist(@RequestBody @Valid ArtistDTO artistDTO,
+                                       BindingResult bindingResult) {
+        Artist artist = convertToArtist(artistDTO);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = returnErrorsAsString(bindingResult);
+
+            throw new ArtistException(errorMessage);
+        }
+
+        artistService.saveArtist(artist);
+
+        return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
     private ArtistDTO converToArtistDTO(Artist artist) {
         return modelMapper.map(artist, ArtistDTO.class);
+    }
+
+    private Artist convertToArtist(ArtistDTO artistDTO) {
+        return modelMapper.map(artistDTO, Artist.class);
     }
 
     private ArtistWithTracksDTO converToArtistWithTracksDTO(Artist artist) {
@@ -51,9 +75,9 @@ public class ArtistController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(ArtistNotFoundException e) {
+    private ResponseEntity<ErrorResponse> handleException(ArtistException e) {
         ErrorResponse response = new ErrorResponse(
-                "Artist with this id not found",
+                e.getMessage(),
                 LocalDateTime.now()
         );
 

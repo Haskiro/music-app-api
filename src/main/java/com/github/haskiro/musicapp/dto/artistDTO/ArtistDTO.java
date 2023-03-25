@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class ArtistDTO {
     @NotEmpty(message = "Last name must not be empty")
     private String lastName;
 
+    @NotNull(message = "Birth Date must not be null")
     private LocalDate birthDate;
 
     private String photo;

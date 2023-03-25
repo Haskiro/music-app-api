@@ -2,12 +2,14 @@ package com.github.haskiro.musicapp.services;
 
 import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.repositories.ArtistRepository;
-import com.github.haskiro.musicapp.util.ArtistNotFoundException;
+import com.github.haskiro.musicapp.util.ArtistException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +31,28 @@ public class ArtistService {
         Optional<Artist> artist = artistRepository.findById(id);
 
         if (artist.isEmpty())
-            throw new ArtistNotFoundException();
+            throw new ArtistException("Artist with this id not found");
 
         Hibernate.initialize(artist.get().getTrackList());
 
         return artist.get();
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public void saveArtist(Artist artist) {
+        artist.setCreatedAt(OffsetDateTime.now());
+
+        artistRepository.save(artist);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public void updateArtist(Artist artist) {
+
+    }
+
+
 
 
 }
