@@ -2,11 +2,14 @@ package com.github.haskiro.musicapp.services;
 
 import com.github.haskiro.musicapp.config.jwt.JwtService;
 import com.github.haskiro.musicapp.dto.userDTO.LoginDTO;
+import com.github.haskiro.musicapp.dto.userDTO.PasswordDTO;
+import com.github.haskiro.musicapp.dto.userDTO.RoleDTO;
 import com.github.haskiro.musicapp.models.Role;
 import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.repositories.UserRepository;
 import com.github.haskiro.musicapp.security.UserDetailsImpl;
 import com.github.haskiro.musicapp.util.AuthenticationResponse;
+import com.github.haskiro.musicapp.util.exceptions.UserCreateUpdateException;
 import com.github.haskiro.musicapp.util.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -96,5 +99,25 @@ public class UserService {
         userToBeUpdated.setPassword(user.getPassword());
 
         userRepository.save(userToBeUpdated);
+    }
+
+    @Transactional
+    public void setRole(int id, RoleDTO roleDTO) {
+        try {
+           Role role = Role.valueOf(roleDTO.getName());
+            User user = findById(id);
+            user.setRole(role);
+
+        } catch (IllegalArgumentException ex) {
+            throw new UserCreateUpdateException("Role not found");
+        }
+    }
+
+    @Transactional
+    public void changePassword(int id, PasswordDTO passwordDTO) {
+        User user = findById(id);
+
+        String encodedPassword = passwordEncoder.encode(passwordDTO.getPassword());
+        user.setPassword(encodedPassword);
     }
 }

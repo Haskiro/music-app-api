@@ -1,7 +1,10 @@
 package com.github.haskiro.musicapp.controllers;
 
 
+import com.github.haskiro.musicapp.dto.userDTO.PasswordDTO;
+import com.github.haskiro.musicapp.dto.userDTO.RoleDTO;
 import com.github.haskiro.musicapp.dto.userDTO.UserDTO;
+import com.github.haskiro.musicapp.models.Role;
 import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.services.UserService;
 import com.github.haskiro.musicapp.util.*;
@@ -75,7 +78,22 @@ public class UserController {
         userService.updateUser(user);
 
         return ResponseEntity.ok(HttpStatus.OK);
+    }
 
+    @PatchMapping("/{id}/set-role")
+    public ResponseEntity<HttpStatus> setRole(@PathVariable("id") int id,
+                                              @RequestBody RoleDTO roleDTO) {
+        userService.setRole(id, roleDTO);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/change-password")
+    public ResponseEntity<HttpStatus> changePassword(@PathVariable("id") int id,
+                                              @RequestBody PasswordDTO passwordDTO) {
+        userService.changePassword(id, passwordDTO);
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     public User convertToUser(UserDTO userDTO) {
