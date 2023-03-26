@@ -91,4 +91,11 @@ public class ArtistService {
 
         artistRepository.deleteById(id);
     }
+
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void setPhoto(int id, String fileUri) {
+        Artist artist = findById(id);
+        artist.setPhoto(fileUri);
+    }
 }

@@ -2,6 +2,7 @@ package com.github.haskiro.musicapp.controllers;
 
 import com.github.haskiro.musicapp.dto.artistDTO.ArtistDTO;
 import com.github.haskiro.musicapp.dto.artistDTO.ArtistWithTracksDTO;
+import com.github.haskiro.musicapp.dto.artistDTO.CreateArtistDTO;
 import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.models.Track;
 import com.github.haskiro.musicapp.services.ArtistService;
@@ -13,13 +14,21 @@ import com.github.haskiro.musicapp.util.exceptions.TrackNotFoundException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
@@ -29,8 +38,10 @@ import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
 public class ArtistController {
     private final ArtistService artistService;
     private final ModelMapper modelMapper;
-
     private final TrackService trackService;
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @Autowired
     public ArtistController(ArtistService artistService, ModelMapper modelMapper, TrackService trackService) {
@@ -82,8 +93,9 @@ public class ArtistController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> createArtist(@RequestBody @Valid ArtistDTO request,
-                                       BindingResult bindingResult) {
+    public ResponseEntity<HttpStatus> createArtist(@RequestBody @Valid CreateArtistDTO request,
+                                                   BindingResult bindingResult) {
+
         Artist artist = convertToArtist(request);
 
         if (bindingResult.hasErrors()) {
@@ -95,6 +107,20 @@ public class ArtistController {
         artistService.saveArtist(artist);
 
         return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{id}/upload-photo")
+    public ResponseEntity<HttpStatus> uploadPhoto(@PathVariable("id") int id,
+            @RequestPart MultipartFile photo) throws IOException {
+        String fileUri =  uploadPath + "/artists/" + UUID.randomUUID() + photo.getOriginalFilename();
+
+        Files.createDirectories(Paths.get(uploadPath + "/artists/"));
+        File file = new File(fileUri);
+        photo.transferTo(file);
+
+        artistService.setPhoto(id, fileUri);
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
@@ -119,8 +145,8 @@ public class ArtistController {
         return modelMapper.map(artist, ArtistDTO.class);
     }
 
-    private Artist convertToArtist(ArtistDTO artistDTO) {
-        return modelMapper.map(artistDTO, Artist.class);
+    private <T> Artist convertToArtist(T dto) {
+        return modelMapper.map(dto, Artist.class);
     }
 
     private ArtistWithTracksDTO converToArtistWithTracksDTO(Artist artist) {
