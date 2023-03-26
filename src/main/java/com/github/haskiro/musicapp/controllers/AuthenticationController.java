@@ -8,7 +8,7 @@ import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.services.UserService;
 import com.github.haskiro.musicapp.util.AuthenticationResponse;
 import com.github.haskiro.musicapp.util.ErrorResponse;
-import com.github.haskiro.musicapp.util.UserRegistrationError;
+import com.github.haskiro.musicapp.util.exceptions.UserRegisterException;
 import com.github.haskiro.musicapp.util.UserValidator;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -16,14 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
 
@@ -50,7 +46,7 @@ public class AuthenticationController {
         if (bindingResult.hasErrors()) {
             String errorMessage = returnErrorsAsString(bindingResult);
 
-            throw new UserRegistrationError(errorMessage);
+            throw new UserRegisterException(errorMessage);
         }
 
 
@@ -74,7 +70,7 @@ public class AuthenticationController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(UserRegistrationError e) {
+    private ResponseEntity<ErrorResponse> handleException(UserRegisterException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()

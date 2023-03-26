@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,8 +33,8 @@ public class Track {
     private String audioFile;
 
     @Column(name = "released_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private OffsetDateTime releasedAt;
+    @Temporal(TemporalType.DATE)
+    private LocalDate releasedAt;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -46,7 +48,7 @@ public class Track {
     )
     List<Artist> artistList;
 
-    public Track(String title, String cover, String audioFile, OffsetDateTime releasedAt) {
+    public Track(String title, String cover, String audioFile, LocalDate releasedAt) {
         this.title = title;
         this.cover = cover;
         this.audioFile = audioFile;
@@ -88,11 +90,11 @@ public class Track {
         this.audioFile = audioFile;
     }
 
-    public OffsetDateTime getReleasedAt() {
+    public LocalDate getReleasedAt() {
         return releasedAt;
     }
 
-    public void setReleasedAt(OffsetDateTime releasedAt) {
+    public void setReleasedAt(LocalDate releasedAt) {
         this.releasedAt = releasedAt;
     }
 

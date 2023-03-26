@@ -7,7 +7,9 @@ import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.repositories.UserRepository;
 import com.github.haskiro.musicapp.security.UserDetailsImpl;
 import com.github.haskiro.musicapp.util.AuthenticationResponse;
+import com.github.haskiro.musicapp.util.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,12 +37,18 @@ public class UserService {
         this.authenticationManager = authenticationManager;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public User findById(int id) {
+        return userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional

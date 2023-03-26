@@ -2,7 +2,7 @@ package com.github.haskiro.musicapp.services;
 
 import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.repositories.ArtistRepository;
-import com.github.haskiro.musicapp.util.ArtistException;
+import com.github.haskiro.musicapp.util.exceptions.ArtistNotFoundException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,7 +31,7 @@ public class ArtistService {
         Optional<Artist> artist = artistRepository.findById(id);
 
         if (artist.isEmpty())
-            throw new ArtistException("Artist with this id not found");
+            throw new ArtistNotFoundException();
 
         Hibernate.initialize(artist.get().getTrackList());
 

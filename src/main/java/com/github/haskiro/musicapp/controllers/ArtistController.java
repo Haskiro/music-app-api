@@ -4,7 +4,8 @@ import com.github.haskiro.musicapp.dto.artistDTO.ArtistDTO;
 import com.github.haskiro.musicapp.dto.artistDTO.ArtistWithTracksDTO;
 import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.services.ArtistService;
-import com.github.haskiro.musicapp.util.ArtistException;
+import com.github.haskiro.musicapp.util.exceptions.ArtistCreateUpdateException;
+import com.github.haskiro.musicapp.util.exceptions.ArtistNotFoundException;
 import com.github.haskiro.musicapp.util.ErrorResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -54,7 +55,7 @@ public class ArtistController {
         if (bindingResult.hasErrors()) {
             String errorMessage = returnErrorsAsString(bindingResult);
 
-            throw new ArtistException(errorMessage);
+            throw new ArtistCreateUpdateException(errorMessage);
         }
 
         artistService.saveArtist(artist);
@@ -75,12 +76,22 @@ public class ArtistController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(ArtistException e) {
+    private ResponseEntity<ErrorResponse> handleException(ArtistNotFoundException e) {
+        ErrorResponse response = new ErrorResponse(
+                "Artist not Found",
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(ArtistCreateUpdateException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()
         );
 
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,29 +1,20 @@
 package com.github.haskiro.musicapp.controllers;
 
 
-import com.github.haskiro.musicapp.dto.userDTO.LoginDTO;
-import com.github.haskiro.musicapp.dto.userDTO.RegistrationDTO;
 import com.github.haskiro.musicapp.dto.userDTO.UserDTO;
 import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.services.UserService;
-import com.github.haskiro.musicapp.util.AuthenticationResponse;
-import com.github.haskiro.musicapp.util.ErrorResponse;
-import com.github.haskiro.musicapp.util.UserRegistrationError;
-import com.github.haskiro.musicapp.util.UserValidator;
-import jakarta.validation.Valid;
+import com.github.haskiro.musicapp.util.*;
+import com.github.haskiro.musicapp.util.exceptions.UserNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
 
 @RestController
 @RequestMapping("/api/users")
@@ -46,6 +37,21 @@ public class UserController {
 
     public UserDTO convertToUserDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @GetMapping("/{id}")
+    public UserDTO getUser(@PathVariable("id") int id) {
+        return convertToUserDTO(userService.findById(id));
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(UserNotFoundException e) {
+        ErrorResponse response = new ErrorResponse(
+                "User not found",
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

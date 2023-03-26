@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 public class TrackDTO {
@@ -19,7 +20,8 @@ public class TrackDTO {
     @NotNull(message = "Audio file must not be null")
     private String audioFile;
 
-    private OffsetDateTime releasedAt;
+    @NotNull
+    private LocalDate releasedAt;
 
     public int getId() {
         return id;
@@ -53,11 +55,11 @@ public class TrackDTO {
         this.audioFile = audioFile;
     }
 
-    public OffsetDateTime getReleasedAt() {
+    public LocalDate getReleasedAt() {
         return releasedAt;
     }
 
-    public void setReleasedAt(OffsetDateTime releasedAt) {
+    public void setReleasedAt(LocalDate releasedAt) {
         this.releasedAt = releasedAt;
     }
 }
