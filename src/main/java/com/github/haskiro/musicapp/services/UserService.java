@@ -80,9 +80,21 @@ public class UserService {
         return new AuthenticationResponse(jwtToken);
     }
 
+    @Transactional
     public void deleteUser(int id) {
         User user = findById(id);
 
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public void updateUser(int id, User updatedUser) {
+        User user = findById(id);
+
+        updatedUser.setCreatedAt(user.getCreatedAt());
+        updatedUser.setRole(user.getRole());
+        updatedUser.setPassword(user.getPassword());
+
+        userRepository.save(updatedUser);
     }
 }

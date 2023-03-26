@@ -1,6 +1,7 @@
 package com.github.haskiro.musicapp.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.Constraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -18,7 +19,7 @@ public class User {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     @Email(message = "Email must match patter email@example.com")
     @NotEmpty(message = "Email must not be empty")
     private String email;

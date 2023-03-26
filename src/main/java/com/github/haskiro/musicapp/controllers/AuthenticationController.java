@@ -3,12 +3,11 @@ package com.github.haskiro.musicapp.controllers;
 
 import com.github.haskiro.musicapp.dto.userDTO.LoginDTO;
 import com.github.haskiro.musicapp.dto.userDTO.RegistrationDTO;
-import com.github.haskiro.musicapp.dto.userDTO.UserDTO;
 import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.services.UserService;
 import com.github.haskiro.musicapp.util.AuthenticationResponse;
 import com.github.haskiro.musicapp.util.ErrorResponse;
-import com.github.haskiro.musicapp.util.exceptions.UserRegisterException;
+import com.github.haskiro.musicapp.util.exceptions.UserCreateUpdateException;
 import com.github.haskiro.musicapp.util.UserValidator;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -46,7 +45,7 @@ public class AuthenticationController {
         if (bindingResult.hasErrors()) {
             String errorMessage = returnErrorsAsString(bindingResult);
 
-            throw new UserRegisterException(errorMessage);
+            throw new UserCreateUpdateException(errorMessage);
         }
 
 
@@ -59,18 +58,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(userService.login(request));
     }
 
-    public UserDTO convertToUserDTO(User user) {
-        return modelMapper.map(user, UserDTO.class);
-    }
     public User convertToUser(RegistrationDTO registrationDTO) {
         return modelMapper.map(registrationDTO, User.class);
     }
-    public User convertToUser(LoginDTO loginDTO) {
-        return modelMapper.map(loginDTO, User.class);
-    }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(UserRegisterException e) {
+    private ResponseEntity<ErrorResponse> handleException(UserCreateUpdateException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()
