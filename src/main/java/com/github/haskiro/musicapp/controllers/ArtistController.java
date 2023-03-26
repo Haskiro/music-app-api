@@ -82,9 +82,9 @@ public class ArtistController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> createArtist(@RequestBody @Valid ArtistDTO artistDTO,
+    public ResponseEntity<HttpStatus> createArtist(@RequestBody @Valid ArtistDTO request,
                                        BindingResult bindingResult) {
-        Artist artist = convertToArtist(artistDTO);
+        Artist artist = convertToArtist(request);
 
         if (bindingResult.hasErrors()) {
             String errorMessage = returnErrorsAsString(bindingResult);
@@ -95,6 +95,24 @@ public class ArtistController {
         artistService.saveArtist(artist);
 
         return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> updateArtist(@PathVariable("id") int id,
+                                                   @RequestBody @Valid ArtistDTO request,
+                                                   BindingResult bindingResult) {
+        Artist artist = convertToArtist(request);
+        artist.setId(id);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = returnErrorsAsString(bindingResult);
+
+            throw new ArtistCreateUpdateException(errorMessage);
+        }
+
+        artistService.updateArtist(artist);
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     private ArtistDTO converToArtistDTO(Artist artist) {

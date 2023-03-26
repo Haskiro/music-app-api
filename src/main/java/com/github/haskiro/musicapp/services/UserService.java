@@ -88,13 +88,13 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(int id, User updatedUser) {
-        User user = findById(id);
+    public void updateUser(User userToBeUpdated) {
+        User user = findById(userToBeUpdated.getId());
 
-        updatedUser.setCreatedAt(user.getCreatedAt());
-        updatedUser.setRole(user.getRole());
-        updatedUser.setPassword(user.getPassword());
+        userToBeUpdated.setCreatedAt(user.getCreatedAt());
+        userToBeUpdated.setRole(user.getRole());
+        userToBeUpdated.setPassword(user.getPassword());
 
-        userRepository.save(updatedUser);
+        userRepository.save(userToBeUpdated);
     }
 }

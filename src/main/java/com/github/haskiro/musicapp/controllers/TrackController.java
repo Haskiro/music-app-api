@@ -1,10 +1,15 @@
 package com.github.haskiro.musicapp.controllers;
 
+import com.github.haskiro.musicapp.dto.artistDTO.ArtistDTO;
 import com.github.haskiro.musicapp.dto.trackDTO.TrackDTO;
+import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.models.Track;
 import com.github.haskiro.musicapp.services.TrackService;
 import com.github.haskiro.musicapp.util.ErrorResponse;
+import com.github.haskiro.musicapp.util.exceptions.ArtistCreateUpdateException;
 import com.github.haskiro.musicapp.util.exceptions.TrackCreateUpdateException;
+import com.github.haskiro.musicapp.util.exceptions.TrackNotFoundException;
+import com.github.haskiro.musicapp.util.exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +64,24 @@ public class TrackController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> updateTrack(@PathVariable("id") int id,
+                                                   @RequestBody @Valid TrackDTO request,
+                                                   BindingResult bindingResult) {
+        Track track = converToTrack(request);
+        track.setId(id);
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = returnErrorsAsString(bindingResult);
+
+            throw new TrackCreateUpdateException(errorMessage);
+        }
+
+        trackService.updateTrack(track);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     private TrackDTO converToTrackDTO(Track track) {
         return modelMapper.map(track, TrackDTO.class);
     }
@@ -75,6 +98,16 @@ public class TrackController {
         );
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(TrackNotFoundException e) {
+        ErrorResponse response = new ErrorResponse(
+                "Track not found",
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 

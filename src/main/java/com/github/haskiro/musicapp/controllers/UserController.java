@@ -72,7 +72,7 @@ public class UserController {
             throw new UserCreateUpdateException(errorMessage);
         }
 
-        userService.updateUser(id, user);
+        userService.updateUser(user);
 
         return ResponseEntity.ok(HttpStatus.OK);
 

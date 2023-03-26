@@ -51,8 +51,13 @@ public class ArtistService {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
-    public void updateArtist(Artist artist) {
+    public void updateArtist(Artist artistToBeUpdated) {
+        Artist artist = findById(artistToBeUpdated.getId());
 
+        artistToBeUpdated.setCreatedAt(artist.getCreatedAt());
+        artistToBeUpdated.setTrackList(artist.getTrackList());
+
+        artistRepository.save(artistToBeUpdated);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

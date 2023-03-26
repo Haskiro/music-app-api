@@ -49,4 +49,15 @@ public class TrackService {
 
         trackRepository.deleteById(id);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public void updateTrack(Track trackToBeUpdated) {
+        Track track = findById(trackToBeUpdated.getId());
+
+        trackToBeUpdated.setCreatedAt(track.getCreatedAt());
+        trackToBeUpdated.setArtistList(track.getArtistList());
+
+        trackRepository.save(trackToBeUpdated);
+    }
 }
