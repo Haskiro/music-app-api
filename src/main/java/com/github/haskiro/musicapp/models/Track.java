@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "track")
@@ -46,7 +47,7 @@ public class Track {
             joinColumns = @JoinColumn(name = "track_id"),
             inverseJoinColumns = @JoinColumn(name = "artist_id")
     )
-    List<Artist> artistList;
+    Set<Artist> artistList;
 
     public Track(String title, String cover, String audioFile, LocalDate releasedAt) {
         this.title = title;
@@ -106,11 +107,11 @@ public class Track {
         this.createdAt = createdAt;
     }
 
-    public List<Artist> getArtistList() {
+    public Set<Artist> getArtistList() {
         return artistList;
     }
 
-    public void setArtistList(List<Artist> artistList) {
+    public void setArtistList(Set<Artist> artistList) {
         this.artistList = artistList;
     }
 

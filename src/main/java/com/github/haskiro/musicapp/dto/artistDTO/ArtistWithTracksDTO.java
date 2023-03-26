@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public class ArtistWithTracksDTO {
     private int id;
@@ -29,7 +30,7 @@ public class ArtistWithTracksDTO {
 
     private String bio;
 
-    private List<TrackDTO> trackList;
+    private Set<TrackDTO> trackList;
 
     public int getId() {
         return id;
@@ -87,11 +88,11 @@ public class ArtistWithTracksDTO {
         this.bio = bio;
     }
 
-    public List<TrackDTO> getTrackList() {
+    public Set<TrackDTO> getTrackList() {
         return trackList;
     }
 
-    public void setTrackList(List<TrackDTO> trackList) {
+    public void setTrackList(Set<TrackDTO> trackList) {
         this.trackList = trackList;
     }
 }

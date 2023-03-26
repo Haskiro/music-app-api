@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "artist")
@@ -50,7 +51,7 @@ public class Artist {
     private OffsetDateTime createdAt;
 
     @ManyToMany(mappedBy = "artistList")
-    List<Track> trackList;
+    Set<Track> trackList;
 
     public Artist(String nickname, String firstName, String lastName, LocalDate birthDate, String photo, String bio, OffsetDateTime createdAt) {
         this.nickname = nickname;
@@ -129,11 +130,11 @@ public class Artist {
         this.createdAt = createdAt;
     }
 
-    public List<Track> getTrackList() {
+    public Set<Track> getTrackList() {
         return trackList;
     }
 
-    public void setTrackList(List<Track> trackList) {
+    public void setTrackList(Set<Track> trackList) {
         this.trackList = trackList;
     }
 
