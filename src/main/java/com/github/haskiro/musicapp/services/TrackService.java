@@ -2,7 +2,7 @@ package com.github.haskiro.musicapp.services;
 
 import com.github.haskiro.musicapp.models.Track;
 import com.github.haskiro.musicapp.repositories.TrackRepository;
-import com.github.haskiro.musicapp.util.exceptions.TrackException;
+import com.github.haskiro.musicapp.util.exceptions.TrackNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class TrackService {
 
     public Track findById(int id) {
         return trackRepository.findById(id)
-                .orElseThrow(() -> new TrackException("Track with this id is not found!"));
+                .orElseThrow(() -> new TrackNotFoundException());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
