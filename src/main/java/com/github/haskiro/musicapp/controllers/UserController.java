@@ -44,6 +44,13 @@ public class UserController {
         return convertToUserDTO(userService.findById(id));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int id) {
+        userService.deleteUser(id);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(UserNotFoundException e) {
         ErrorResponse response = new ErrorResponse(

@@ -79,4 +79,10 @@ public class UserService {
         String jwtToken = jwtService.generateToken(new UserDetailsImpl(user));
         return new AuthenticationResponse(jwtToken);
     }
+
+    public void deleteUser(int id) {
+        User user = findById(id);
+
+        userRepository.delete(user);
+    }
 }

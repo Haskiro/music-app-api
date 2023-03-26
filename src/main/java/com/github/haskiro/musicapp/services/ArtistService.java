@@ -57,12 +57,33 @@ public class ArtistService {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
-    public void setRelationBetweebArtistAndTrack(int trackId, int artistId) {
+    public void setRelationBetweenArtistAndTrack(int trackId, int artistId) {
 
         Track track = trackService.findById(trackId);
         Artist artist = findById(artistId);
 
         track.getArtistList().add(artist);
         artist.getTrackList().add(track);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public void removeRelationBetweenArtistAndTrack(int trackId, int artistId) {
+        Track track = trackService.findById(trackId);
+        Artist artist = findById(artistId);
+
+        track.getArtistList().remove(artist);
+        artist.getTrackList().remove(track);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public void deleteArtist(int id) {
+        Artist artist = findById(id);
+        artist.getTrackList().forEach(track -> {
+            track.getArtistList().remove(artist);
+        });
+
+        artistRepository.deleteById(id);
     }
 }

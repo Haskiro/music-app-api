@@ -1,5 +1,6 @@
 package com.github.haskiro.musicapp.services;
 
+import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.models.Track;
 import com.github.haskiro.musicapp.repositories.TrackRepository;
 import com.github.haskiro.musicapp.util.exceptions.TrackNotFoundException;
@@ -36,5 +37,16 @@ public class TrackService {
         track.setCreatedAt(OffsetDateTime.now());
 
         trackRepository.save(track);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public void deleteTrack(int id) {
+        Track track = findById(id);
+        track.getArtistList().forEach(artist -> {
+            artist.getTrackList().remove(track);
+        });
+
+        trackRepository.deleteById(id);
     }
 }

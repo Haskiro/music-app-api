@@ -53,13 +53,30 @@ public class ArtistController {
         return converToArtistWithTracksDTO(artist);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteArtist(@PathVariable("id") int id) {
+        artistService.deleteArtist(id);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
 
     @PostMapping("/{artist_id}/tracks/{track_id}")
     public ResponseEntity<HttpStatus> setRelationBetweenArtistAndTrack(
             @PathVariable("artist_id") int artistId,
             @PathVariable("track_id") int trackId
     ) {
-        artistService.setRelationBetweebArtistAndTrack(trackId, artistId);
+        artistService.setRelationBetweenArtistAndTrack(trackId, artistId);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{artist_id}/tracks/{track_id}")
+    public ResponseEntity<HttpStatus> removeRelationBetweenArtistAndTrack(
+            @PathVariable("artist_id") int artistId,
+            @PathVariable("track_id") int trackId
+    ) {
+        artistService.removeRelationBetweenArtistAndTrack(trackId, artistId);
 
         return ResponseEntity.ok(HttpStatus.OK);
     }

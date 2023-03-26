@@ -52,6 +52,13 @@ public class TrackController {
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteTrack(@PathVariable("id") int id) {
+        trackService.deleteTrack(id);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     private TrackDTO converToTrackDTO(Track track) {
         return modelMapper.map(track, TrackDTO.class);
     }
