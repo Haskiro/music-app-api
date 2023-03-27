@@ -84,6 +84,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteUser(int id) {
         User user = findById(id);
 
@@ -102,6 +103,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void setRole(int id, RoleDTO roleDTO) {
         try {
            Role role = Role.valueOf(roleDTO.getName());
@@ -119,5 +121,11 @@ public class UserService {
 
         String encodedPassword = passwordEncoder.encode(passwordDTO.getPassword());
         user.setPassword(encodedPassword);
+    }
+
+    @Transactional
+    public void setPhoto(int id, String fileUri) {
+        User user = findById(id);
+        user.setPhoto(fileUri);
     }
 }

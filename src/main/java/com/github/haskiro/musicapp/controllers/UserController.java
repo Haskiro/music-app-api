@@ -13,13 +13,20 @@ import com.github.haskiro.musicapp.util.exceptions.UserCreateUpdateException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
@@ -30,6 +37,8 @@ public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final UserValidator userValidator;
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @Autowired
     public UserController(UserService userService, ModelMapper modelMapper, UserValidator userValidator) {
@@ -76,6 +85,20 @@ public class UserController {
         }
 
         userService.updateUser(user);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/upload-photo")
+    public ResponseEntity<HttpStatus> uploadPhoto(@PathVariable("id") int id,
+                                                  @RequestPart MultipartFile photo) throws IOException {
+        String fileUri =  uploadPath + "/users/photo/" + UUID.randomUUID() + photo.getOriginalFilename();
+
+        Files.createDirectories(Paths.get(uploadPath + "/users/photo/"));
+        File file = new File(fileUri);
+        photo.transferTo(file);
+
+        userService.setPhoto(id, fileUri);
 
         return ResponseEntity.ok(HttpStatus.OK);
     }
