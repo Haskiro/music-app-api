@@ -1,15 +1,14 @@
 package com.github.haskiro.musicapp.dto.artistDTO;
 
+import com.github.haskiro.musicapp.dto.albumDTO.AlbumDTO;
 import com.github.haskiro.musicapp.dto.trackDTO.TrackDTO;
-import com.github.haskiro.musicapp.models.Track;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
-public class ArtistWithTracksDTO {
+public class ArtistWithTracksAndAlbumsDTO {
     private int id;
 
     @Size(min = 2, max = 30, message = "Nickname length must be between 2 and 30 characters")
@@ -30,7 +29,9 @@ public class ArtistWithTracksDTO {
 
     private String bio;
 
-    private Set<TrackDTO> trackList;
+    private Set<TrackDTO> tracks;
+
+    private Set<AlbumDTO> albums;
 
     public int getId() {
         return id;
@@ -88,11 +89,19 @@ public class ArtistWithTracksDTO {
         this.bio = bio;
     }
 
-    public Set<TrackDTO> getTrackList() {
-        return trackList;
+    public Set<TrackDTO> getTracks() {
+        return tracks;
     }
 
-    public void setTrackList(Set<TrackDTO> trackList) {
-        this.trackList = trackList;
+    public void setTracks(Set<TrackDTO> tracks) {
+        this.tracks = tracks;
+    }
+
+    public Set<AlbumDTO> getAlbums() {
+        return albums;
+    }
+
+    public void setAlbums(Set<AlbumDTO> albums) {
+        this.albums = albums;
     }
 }

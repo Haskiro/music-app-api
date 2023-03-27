@@ -2,13 +2,10 @@ package com.github.haskiro.musicapp.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,7 +27,6 @@ public class Track {
     private String cover;
 
     @Column(name = "audio_file")
-    @NotNull(message = "Audio file must not be null")
     private String audioFile;
 
     @Column(name = "released_at")
@@ -48,6 +44,9 @@ public class Track {
             inverseJoinColumns = @JoinColumn(name = "artist_id")
     )
     Set<Artist> artistList;
+
+    @ManyToMany(mappedBy = "albumList")
+    Set<Album> albumList;
 
     public Track(String title, String cover, String audioFile, LocalDate releasedAt) {
         this.title = title;
@@ -113,6 +112,14 @@ public class Track {
 
     public void setArtistList(Set<Artist> artistList) {
         this.artistList = artistList;
+    }
+
+    public Set<Album> getAlbumList() {
+        return albumList;
+    }
+
+    public void setAlbumList(Set<Album> albumList) {
+        this.albumList = albumList;
     }
 
     @Override

@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -52,6 +51,9 @@ public class Artist {
 
     @ManyToMany(mappedBy = "artistList")
     Set<Track> trackList;
+
+    @ManyToMany(mappedBy = "albumList")
+    Set<Album> albumList;
 
     public Artist(String nickname, String firstName, String lastName, LocalDate birthDate, String photo, String bio, OffsetDateTime createdAt) {
         this.nickname = nickname;
@@ -136,6 +138,14 @@ public class Artist {
 
     public void setTrackList(Set<Track> trackList) {
         this.trackList = trackList;
+    }
+
+    public Set<Album> getAlbumList() {
+        return albumList;
+    }
+
+    public void setAlbumList(Set<Album> albumList) {
+        this.albumList = albumList;
     }
 
     @Override

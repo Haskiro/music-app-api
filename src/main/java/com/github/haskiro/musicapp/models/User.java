@@ -1,7 +1,6 @@
 package com.github.haskiro.musicapp.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.Constraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

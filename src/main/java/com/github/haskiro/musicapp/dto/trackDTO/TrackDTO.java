@@ -17,7 +17,6 @@ public class TrackDTO {
 
     private String cover;
 
-    @NotNull(message = "Audio file must not be null")
     private String audioFile;
 
     @NotNull

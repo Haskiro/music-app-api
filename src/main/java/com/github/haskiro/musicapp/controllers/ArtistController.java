@@ -1,10 +1,9 @@
 package com.github.haskiro.musicapp.controllers;
 
 import com.github.haskiro.musicapp.dto.artistDTO.ArtistDTO;
-import com.github.haskiro.musicapp.dto.artistDTO.ArtistWithTracksDTO;
+import com.github.haskiro.musicapp.dto.artistDTO.ArtistWithTracksAndAlbumsDTO;
 import com.github.haskiro.musicapp.dto.artistDTO.CreateArtistDTO;
 import com.github.haskiro.musicapp.models.Artist;
-import com.github.haskiro.musicapp.models.Track;
 import com.github.haskiro.musicapp.services.ArtistService;
 import com.github.haskiro.musicapp.services.TrackService;
 import com.github.haskiro.musicapp.util.exceptions.ArtistCreateUpdateException;
@@ -23,14 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
@@ -60,10 +53,10 @@ public class ArtistController {
     }
 
     @GetMapping("/{id}")
-    public ArtistWithTracksDTO findOneById(@PathVariable("id") int id) {
+    public ArtistWithTracksAndAlbumsDTO findOneById(@PathVariable("id") int id) {
         Artist artist = artistService.findById(id);
 
-        return converToArtistWithTracksDTO(artist);
+        return convertToArtistWithTracksDTO(artist);
     }
 
     @DeleteMapping("/{id}")
@@ -146,8 +139,8 @@ public class ArtistController {
         return modelMapper.map(dto, Artist.class);
     }
 
-    private ArtistWithTracksDTO converToArtistWithTracksDTO(Artist artist) {
-        return modelMapper.map(artist, ArtistWithTracksDTO.class);
+    private ArtistWithTracksAndAlbumsDTO convertToArtistWithTracksDTO(Artist artist) {
+        return modelMapper.map(artist, ArtistWithTracksAndAlbumsDTO.class);
     }
 
     @ExceptionHandler
