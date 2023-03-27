@@ -6,20 +6,25 @@ import com.github.haskiro.musicapp.models.Artist;
 import com.github.haskiro.musicapp.models.Track;
 import com.github.haskiro.musicapp.services.TrackService;
 import com.github.haskiro.musicapp.util.ErrorResponse;
-import com.github.haskiro.musicapp.util.exceptions.ArtistCreateUpdateException;
-import com.github.haskiro.musicapp.util.exceptions.TrackCreateUpdateException;
-import com.github.haskiro.musicapp.util.exceptions.TrackNotFoundException;
-import com.github.haskiro.musicapp.util.exceptions.UserNotFoundException;
+import com.github.haskiro.musicapp.util.exceptions.*;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.github.haskiro.musicapp.util.ErrorUtil.returnErrorsAsString;
@@ -82,6 +87,22 @@ public class TrackController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @PostMapping("/{id}/upload-image")
+    public ResponseEntity<HttpStatus> uploadCover(@PathVariable("id") int id,
+                                                  @RequestPart MultipartFile image) {
+        trackService.setCover(id, image);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/upload-audio")
+    public ResponseEntity<HttpStatus> uploadAudio(@PathVariable("id") int id,
+                                                  @RequestPart MultipartFile audio) {
+        trackService.setAudio(id, audio);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     private TrackDTO converToTrackDTO(Track track) {
         return modelMapper.map(track, TrackDTO.class);
     }
@@ -108,6 +129,26 @@ public class TrackController {
         );
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(FileUploadException e) {
+        ErrorResponse response = new ErrorResponse(
+                "File uploading error",
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(MissingServletRequestPartException e) {
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 

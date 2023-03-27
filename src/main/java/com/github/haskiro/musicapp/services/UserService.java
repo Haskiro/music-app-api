@@ -9,9 +9,11 @@ import com.github.haskiro.musicapp.models.User;
 import com.github.haskiro.musicapp.repositories.UserRepository;
 import com.github.haskiro.musicapp.security.UserDetailsImpl;
 import com.github.haskiro.musicapp.util.AuthenticationResponse;
+import com.github.haskiro.musicapp.util.exceptions.FileUploadException;
 import com.github.haskiro.musicapp.util.exceptions.UserCreateUpdateException;
 import com.github.haskiro.musicapp.util.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,10 +21,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,6 +40,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
@@ -124,8 +135,22 @@ public class UserService {
     }
 
     @Transactional
-    public void setPhoto(int id, String fileUri) {
+    public void setPhoto(int id, MultipartFile file) {
+        String fileUri =  uploadPath + "/users/photo/" + UUID.randomUUID() + file.getOriginalFilename();
+
+        saveFile(fileUri, Paths.get(uploadPath + "/users/photo/"), file);
+
         User user = findById(id);
         user.setPhoto(fileUri);
+    }
+
+    private void saveFile(String fileUri, Path fileUrl, MultipartFile multipartFile)  {
+        try {
+            Files.createDirectories(fileUrl);
+            File file = new File(fileUri);
+            multipartFile.transferTo(file);
+        } catch (IOException e) {
+            throw new FileUploadException();
+        }
     }
 }

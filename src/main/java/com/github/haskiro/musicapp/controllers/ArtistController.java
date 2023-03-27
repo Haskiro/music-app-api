@@ -10,6 +10,7 @@ import com.github.haskiro.musicapp.services.TrackService;
 import com.github.haskiro.musicapp.util.exceptions.ArtistCreateUpdateException;
 import com.github.haskiro.musicapp.util.exceptions.ArtistNotFoundException;
 import com.github.haskiro.musicapp.util.ErrorResponse;
+import com.github.haskiro.musicapp.util.exceptions.FileUploadException;
 import com.github.haskiro.musicapp.util.exceptions.TrackNotFoundException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,14 +113,9 @@ public class ArtistController {
 
     @PostMapping("/{id}/upload-photo")
     public ResponseEntity<HttpStatus> uploadPhoto(@PathVariable("id") int id,
-            @RequestPart MultipartFile photo) throws IOException {
-        String fileUri =  uploadPath + "/artists/" + UUID.randomUUID() + photo.getOriginalFilename();
+            @RequestPart MultipartFile photo) {
 
-        Files.createDirectories(Paths.get(uploadPath + "/artists/"));
-        File file = new File(fileUri);
-        photo.transferTo(file);
-
-        artistService.setPhoto(id, fileUri);
+        artistService.setPhoto(id, photo);
 
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -181,5 +178,25 @@ public class ArtistController {
         );
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(FileUploadException e) {
+        ErrorResponse response = new ErrorResponse(
+                "File uploading error",
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(MissingServletRequestPartException e) {
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
